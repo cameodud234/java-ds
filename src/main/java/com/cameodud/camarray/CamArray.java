@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class CamArray<T> implements Cloneable, java.io.Serializable {
 	
@@ -47,6 +48,44 @@ public class CamArray<T> implements Cloneable, java.io.Serializable {
 		allocatedSize = size;
 	}
 	
+	public void add(T element) {
+		if(size == allocatedSize) {
+			addSpace();
+		}
+		allocatedArray[size] = element;
+		size++;
+	}
+	
+	public void insert(T element, int index) {
+		if(index < 0 || index > size) {
+			throw new IndexOutOfBoundsException(String.format("index: %d, must be a positive integer.", index));
+		}
+		
+		if(index == size) {
+			add(element);
+			return;
+		}
+		
+		if(size == allocatedSize) {
+			addSpace();
+		}
+		
+		for(int i = size; i > index; i--) {
+			allocatedArray[i] = allocatedArray[i - 1];
+		}
+		
+		allocatedArray[index] = element;
+		
+		size++;
+		
+	}
+	
+//	public T pop() {
+//		if (size == 0) {
+//			
+//		}
+//	}
+	
 	public Object[] toArray() {
 		return Arrays.copyOf(allocatedArray, size);
 	}
@@ -81,6 +120,10 @@ public class CamArray<T> implements Cloneable, java.io.Serializable {
             throw new IllegalArgumentException("Input CamArray cannot be null");
         }
     }
-
+	
+	private void addSpace() {
+		int allocatedSize = 2 * this.allocatedSize;
+		this.allocatedArray = Arrays.copyOf(this.allocatedArray, allocatedSize);
+	}
 
 }

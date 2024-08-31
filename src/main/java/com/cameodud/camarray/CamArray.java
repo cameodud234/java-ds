@@ -1,148 +1,159 @@
 package com.cameodud.camarray;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 
-public class CamArray<T> implements Cloneable, java.io.Serializable {
+public class CamArray {
+	
+	private int allocatedSize;
+	private int currentIndex = -1;
+	private int size = 0;
+	private int[] arr;
 
-    private static final long serialVersionUID = 1L;
+	public CamArray(int size) {
+		
+		if(size < 0) {
+			throw new IllegalArgumentException("Size must be nonnegative...");
+		}
+		
+		allocatedSize = size;
+		currentIndex = -1;
+		arr = new int[allocatedSize];
+	}
+	
+	public int getSize() {
+		return size;
+	}
+	
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+	
+	public int getAllocatedSize() {
+		return allocatedSize;
+	}
+	
+	public int[] getArr() {
+		return Arrays.copyOf(arr, size);
+	}
+	
+	public void add(int val) {
+		if(needsResize()) {
+			resize();
+		}
+		if(currentIndex == -1) {
+			currentIndex = 0;
+		}
+		arr[currentIndex] = val;
+		currentIndex++;
+		size++;
+	}
+	
+	public void addFront(int val) {
+		// Need to make sure size is defined.
+		if(needsResize()) {
+			resize();
+		}
+		
+		for(int i = size; i > 0; i--) {
+			arr[i] = arr[i-1];
+		}
+		arr[0] = val;
+		
+		currentIndex++;
+		size++;
+		
+	}
+	
+	// No value means remove last added element
+	public int remove() throws EmptyCamArrayException {
+		if(currentIndex == -1) {
+			throw new EmptyCamArrayException("Cannot remove from empty array.");
+		}
+		
+		currentIndex--;
+		size--;
+		return arr[currentIndex];
+	}
+	
+	public int removeFront() throws EmptyCamArrayException {
+		if(currentIndex == -1) {
+			throw new EmptyCamArrayException("Cannot remove from empty array.");
+		}
+		
+		int val = arr[0];
+		for(int i = 0; i < size - 1; i++) {
+			arr[i] = arr[i + 1];
+		}
+		
+		currentIndex--;
+		size--;
+		return val;
+	}
+	
+	public int remove(int val) throws EmptyCamArrayException {
+		if(currentIndex == -1) {
+			throw new EmptyCamArrayException("Cannot remove from empty array.");
+		}
+		
+		else if(val == arr[0]) {
+			return removeFront();
+		}
+		else if(val == arr[currentIndex - 1]) {
+			return remove();
+		}
+		
+		int index = -1;
+		int returnVal = Integer.MIN_VALUE;
+		for(int i = 0; i < size; i++) {
+			if(arr[i] == val) {
+				index = i;
+				returnVal = arr[index];
+				break;
+			}
+		}
+		if(index == -1) return returnVal;
+		
+		if(needsResize()) {
+			resize();
+		}
+		
+		for(int i = index; i < size - 1; i++) {
+			arr[i] = arr[i+1];
+		}
+		currentIndex--;
+		size--;
+		return returnVal;
+	}
+	
+	private boolean needsResize() {
+		if(size == allocatedSize) {
+			return true;
+		}
+		return false;
+	}
 
-    private Object[] allocatedArray;
-    private int size;
-    private int allocatedSize;
+	private void resize() {
+		int newAllocatedSize = (allocatedSize + 1) * 2;
+		arr = Arrays.copyOf(arr, newAllocatedSize);
+		allocatedSize = newAllocatedSize;
+	}
 
-    private static final Object[] EMPTY_ALLOCATED_ARRAY = {};
-
-    public CamArray(int size) {
-        parameterCheck(size);
-        if(size == 0) this.allocatedArray = EMPTY_ALLOCATED_ARRAY;
-        else allocatedArray = new Object[size];
-        allocatedSize = size;
-        this.size = 0;
-    }
-
-    public CamArray(T[] array) {
-        parameterCheck(array);
-        allocatedArray = Arrays.copyOf(array, array.length);
-        this.size = array.length;
-        this.allocatedSize = array.length;
-    }
-
-    public CamArray(Collection<? extends T> elements) {
-        Objects.requireNonNull(elements, "Collection cannot be null");
-        Object[] items = elements.toArray();
-        int size = items.length;
-        if (size != 0) {
-            allocatedArray = Arrays.copyOf(items, size, Object[].class);
-        } else {
-            allocatedArray = EMPTY_ALLOCATED_ARRAY;
-        }
-        this.size = size;
-        this.allocatedSize = size;
-    }
-
-    public void add(T element) {
-        if (size == allocatedSize) {
-            addSpace();
-        }
-        allocatedArray[size] = element;
-        size++;
-    }
-
-    public void addAll(T[] elements) {
-        for (T element : elements) {
-            add(element);
-        }
-    }
-
-    public void addAll(List<T> elements) {
-        for (T element : elements) {
-            add(element);
-        }
-    }
-
-    public void insert(T element, int index) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException(String.format("Index: %d, must be a positive integer within bounds.", index));
-        }
-
-        if (index == size) {
-            add(element);
-            return;
-        }
-
-        if (size == allocatedSize) {
-            addSpace();
-        }
-
-        for (int i = size; i > index; i--) {
-            allocatedArray[i] = allocatedArray[i - 1];
-        }
-
-        allocatedArray[index] = element;
-        size++;
-    }
-
-    public T pop() {
-        if (size == 0) {
-            throw new IllegalStateException("Cannot pop from an empty CamArray");
-        }
-        try {
-        	T element = (T) allocatedArray[size - 1];
-            allocatedArray[size - 1] = null;
-            size--;
-            return element;
-        }
-        catch(ClassCastException ce) {
-        	throw new ClassCastException("Cannot cast element passed.\n\n" + ce.getMessage());
-        }
-    }
-
-    public Object[] toArray() {
-        return Arrays.copyOf(allocatedArray, size);
-    }
-
-    public List<T> toList() {
-        try {
-            T[] elements = Arrays.copyOf((T[]) allocatedArray, size);
-            List<T> returnElements = new ArrayList<>(size);
-            for (T element : elements) {
-                returnElements.add(element);
-            }
-            return returnElements;
-        } catch (ClassCastException ce) {
-            throw new ClassCastException("CamArray element cannot be cast to generic type.");
-        }
-    }
-
-    public final int getSize() {
-        return size;
-    }
-
-    private void parameterCheck(final int size) {
-        if (size < 0) {
-            String arg = String.format("Size: %d, needs to be a non-negative integer.", size);
-            throw new IllegalArgumentException(arg);
-        }
-    }
-
-    private void parameterCheck(T[] array) {
-        if (array == null) {
-            throw new IllegalArgumentException("Input array cannot be null");
-        }
-    }
-
-    private void addSpace() {
-    	if (this.allocatedSize == 0) {
-    		this.allocatedArray = new Object[1];
-    		this.allocatedSize++;
-    		return;
-    	}
-        int newAllocatedSize =  2 * this.allocatedSize;
-        this.allocatedArray = Arrays.copyOf(this.allocatedArray, newAllocatedSize);
-        this.allocatedSize = newAllocatedSize;
-    }
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		for(int i = 0; i < getSize(); i++) {
+			if(i != getSize() - 1) {
+				sb.append(arr[i]);
+				sb.append(", ");
+			}
+			else {
+				sb.append(arr[i]);
+				sb.append("}");
+				break;
+			}
+		}
+		return sb.toString();
+	}
+	
 }

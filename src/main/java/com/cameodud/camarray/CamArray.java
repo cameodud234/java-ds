@@ -1,8 +1,11 @@
 package com.cameodud.camarray;
 
 import java.util.Arrays;
+import java.util.List;
 
-public class CamArray {
+import com.cameodud.camList.CamList;
+
+public class CamArray implements CamList {
 	
 	private int allocatedSize;
 	private int currentIndex = -1;
@@ -18,6 +21,11 @@ public class CamArray {
 		allocatedSize = size;
 		currentIndex = -1;
 		arr = new int[allocatedSize];
+	}
+	
+	public int get(int index) {
+		checkIndex(index);
+		return arr[index];
 	}
 	
 	public int getSize() {
@@ -36,6 +44,7 @@ public class CamArray {
 		return Arrays.copyOf(arr, size);
 	}
 	
+	@Override
 	public void add(int val) {
 		if(needsResize()) {
 			resize();
@@ -48,6 +57,21 @@ public class CamArray {
 		size++;
 	}
 	
+	@Override
+	public void addAll(int[] vals) {
+		for(int val: vals) {
+			add(val);
+		}
+	}
+
+	@Override
+	public void addAll(List<Integer> vals) {
+		for(int val: vals) {
+			add(val);
+		}
+	}
+	
+	@Override
 	public void addFront(int val) {
 		// Need to make sure size is defined.
 		if(needsResize()) {
@@ -65,9 +89,10 @@ public class CamArray {
 	}
 	
 	// No value means remove last added element
-	public int remove() throws EmptyCamArrayException {
+	@Override
+	public int remove() {
 		if(currentIndex == -1) {
-			throw new EmptyCamArrayException("Cannot remove from empty array.");
+			throw new IllegalStateException("Cannot remove from empty array.");
 		}
 		
 		currentIndex--;
@@ -75,9 +100,10 @@ public class CamArray {
 		return arr[currentIndex];
 	}
 	
-	public int removeFront() throws EmptyCamArrayException {
+	@Override
+	public int removeFront() {
 		if(currentIndex == -1) {
-			throw new EmptyCamArrayException("Cannot remove from empty array.");
+			throw new IllegalStateException("Cannot remove from empty array.");
 		}
 		
 		int val = arr[0];
@@ -90,9 +116,10 @@ public class CamArray {
 		return val;
 	}
 	
-	public int remove(int val) throws EmptyCamArrayException {
+	@Override
+	public int remove(int val) {
 		if(currentIndex == -1) {
-			throw new EmptyCamArrayException("Cannot remove from empty array.");
+			throw new IllegalStateException("Cannot remove from empty array.");
 		}
 		
 		else if(val == arr[0]) {
@@ -136,6 +163,12 @@ public class CamArray {
 		int newAllocatedSize = (allocatedSize + 1) * 2;
 		arr = Arrays.copyOf(arr, newAllocatedSize);
 		allocatedSize = newAllocatedSize;
+	}
+	
+	private void checkIndex(int index) {
+		if(index < 0 || index >= size) {
+			throw new IllegalArgumentException("Index not in range of array.");
+		}
 	}
 
 	@Override

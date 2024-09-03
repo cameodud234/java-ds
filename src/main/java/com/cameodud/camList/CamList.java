@@ -20,6 +20,12 @@ public interface CamList {
 	// Removes element at the end
 	public int remove();
 	
+	// Removes multiple elements from the end.
+	public int[] removeAll(int[] vals);
+	
+	// Removes multiple elements from the end.
+	public List<Integer> removeAll(List<Integer> vals);
+	
 	// Removes element from the front.
 	public int removeFront();
 	

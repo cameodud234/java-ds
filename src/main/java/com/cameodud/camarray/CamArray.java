@@ -101,6 +101,18 @@ public class CamArray implements CamList {
 	}
 	
 	@Override
+	public int[] removeAll(int[] vals) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Integer> removeAll(List<Integer> vals) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	public int removeFront() {
 		if(currentIndex == -1) {
 			throw new IllegalStateException("Cannot remove from empty array.");

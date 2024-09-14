@@ -18,20 +18,27 @@ public interface CamList<T> {
 	// adds element to the front
 	public void addFront(T val);
 	
+	// adds multiple elements to the front
+	public void addFrontAll(T[] vals);
+	
+	// adds multiple elements to the front
+	public void addFrontAll(List<T> vals);
+	
 	// Removes element at the end
 	public T remove();
 	
-	// Removes multiple elements from the end.
-	public T[] removeAll(T[] vals);
-	
-	// Removes multiple elements from the end.
-	public List<T> removeAll(List<T> vals);
+	// Removes all occurances of input value
+	public T removeAll(T val);
 	
 	// Removes element from the front.
 	public T removeFront();
 	
 	// Removes element of specified value
-	public T remove(int val);
+	public T remove(T val);
+	
+	// Removes all elements
+	public void clear();
 	
 	public String toString();
+	
 }

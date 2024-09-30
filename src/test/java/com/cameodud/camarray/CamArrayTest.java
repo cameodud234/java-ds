@@ -318,6 +318,86 @@ public class CamArrayTest {
         assertEquals(3, camArray.getSize());
         assertArrayEquals(new Integer[]{3, 7, 1}, camArray.getArr()); // Array unchanged
     }
+    
+    @Test
+    public void testRemoveAll() {
+    	CamArray<Integer> camArray = new CamArray<>(7);
+        camArray.add(1);
+        camArray.add(2);
+        camArray.add(3);
+        camArray.add(2);
+        camArray.add(5);
+        camArray.add(2);
+        camArray.add(7);
+        
+        camArray.removeAll(2);
+        assertArrayEquals(new Integer[]{1, 3, 5, 7}, camArray.getArr());
+    }
+    
+ // Test where the value to remove is not in the array
+    @Test
+    public void testRemoveAllValueNotPresent() {
+        CamArray<Integer> camArray = new CamArray<>(7);
+        camArray.add(1);
+        camArray.add(3);
+        camArray.add(5);
+        camArray.add(7);
+
+        camArray.removeAll(2);  // 2 is not in the array
+        assertArrayEquals(new Integer[]{1, 3, 5, 7}, camArray.getArr());
+        assertEquals(4, camArray.getSize()); // size should remain the same
+    }
+
+    // Test where the array is empty
+    @Test
+    public void testRemoveAllFromEmptyArray() {
+        CamArray<Integer> camArray = new CamArray<>(0);
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+        	camArray.removeAll(2);
+        });
+
+        assertArrayEquals(new Integer[]{}, camArray.getArr());
+        assertEquals(0, camArray.getSize()); // size should still be 0
+    }
+
+    // Test where all elements in the array match the value to remove
+    @Test
+    public void testRemoveAllElementsMatch() {
+        CamArray<Integer> camArray = new CamArray<>(5);
+        camArray.add(2);
+        camArray.add(2);
+        camArray.add(2);
+        camArray.add(2);
+        camArray.add(2);
+
+        camArray.removeAll(2);
+        assertArrayEquals(new Integer[]{}, camArray.getArr());
+        assertEquals(0, camArray.getSize()); // size should be 0 after removing all elements
+    }
+
+    // Test where the array has only one element and it matches the value to remove
+    @Test
+    public void testRemoveAllSingleElement() {
+        CamArray<Integer> camArray = new CamArray<>(1);
+        camArray.add(2);
+
+        camArray.removeAll(2);
+        assertArrayEquals(new Integer[]{}, camArray.getArr());
+        assertEquals(0, camArray.getSize()); // size should be 0 after removing the only element
+    }
+
+    // Test where the array has only one element and it does not match the value to remove
+    @Test
+    public void testRemoveAllSingleElementNoMatch() {
+        CamArray<Integer> camArray = new CamArray<>(1);
+        camArray.add(1);
+
+        camArray.removeAll(2);  // 2 is not in the array
+        assertArrayEquals(new Integer[]{1}, camArray.getArr());
+        assertEquals(1, camArray.getSize()); // size should remain the same
+    }
+    
 
     @Test
     public void testGetValidIndex() {

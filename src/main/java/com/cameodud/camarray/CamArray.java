@@ -129,16 +129,23 @@ public class CamArray<T> implements CamList<T>, Iterable<T> {
 	@Override
 	public T removeAll(T val) {
 		if(size == 0) {
-			throw new IllegalStateException("Cannot remove first value from empty array.");
+			throw new IllegalStateException("Cannot remove values from empty array.");
 		}
 		
-		T valueOfInterest = remove(val);
+		int slow = 0;
+		int fast = 0;
 		
-		while(remove(val) != null) {
-			continue;
+		while(fast < size) {
+			if(!arr[fast].equals(val)) {
+				arr[slow] = arr[fast];
+				slow++;
+			}
+			fast++;
 		}
 		
-		return valueOfInterest;
+		size = slow;
+		
+		return val;
 		
 	}
 

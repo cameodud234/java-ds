@@ -20,11 +20,12 @@ public class CamLinkedList {
 	public int get(int i) {
 		int count = 0;
 		Node current = head.next;
-		while(current != null) {
+		while(current != null && current != tail) {
 			if(count == i) {
 				return current.val;
 			}
 			current = current.next;
+			count++;
 		}
 		return -1;
 	}

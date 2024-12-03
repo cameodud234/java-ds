@@ -290,5 +290,11 @@ public class CamBST {
 	    }
 	    
 	}
+	
+	public enum TraversalType {
+		PREORDER,
+		POSTORDER,
+		INORDER
+	}
 
 }

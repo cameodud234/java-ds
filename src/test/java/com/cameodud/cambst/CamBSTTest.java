@@ -113,7 +113,7 @@ public class CamBSTTest {
         tree.add(40);
 
         String expected = "50, 30, 20, 40, 70";  // Pre-order: Root -> Left -> Right
-        assertEquals(expected, tree.traverse(TraversalType.PREORDER));
+        assertEquals(expected, tree.traverse(CamBST.TraversalType.PREORDER));
     }
 
     @Test
@@ -125,7 +125,7 @@ public class CamBSTTest {
         tree.add(40);
 
         String expected = "20, 30, 40, 50, 70";  // In-order: Left -> Root -> Right
-        assertEquals(expected, tree.traverse(TraversalType.INORDER));
+        assertEquals(expected, tree.traverse(CamBST.TraversalType.INORDER));
     }
 
     @Test
@@ -137,7 +137,7 @@ public class CamBSTTest {
         tree.add(40);
 
         String expected = "20, 40, 30, 70, 50";  // Post-order: Left -> Right -> Root
-        assertEquals(expected, tree.traverse(TraversalType.POSTORDER));
+        assertEquals(expected, tree.traverse(CamBST.TraversalType.POSTORDER));
     }
 
     @Test
